@@ -1,0 +1,96 @@
+# Backend — Express REST API + Socket.IO, оркестратор воркеров (ВКР §2.4, Листинг 8).
+# Слушает порт 3050 (PORT в .env). Образ собирается из корневого Dockerfile.
+# Сервис-аккаунт даёт право управлять подами/неймспейсами воркеров в кластере
+# (приложение создаёт Worker Pod'ы программно через @kubernetes/client-node).
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: backend
+  namespace: cian-lead-generator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cian-worker-manager
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "namespaces", "configmaps", "secrets"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: backend-worker-manager
+subjects:
+  - kind: ServiceAccount
+    name: backend
+    namespace: cian-lead-generator
+roleRef:
+  kind: ClusterRole
+  name: cian-worker-manager
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: cian-lead-generator
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      serviceAccountName: backend
+      containers:
+        - name: backend
+          image: ghcr.io/cian-lead/backend:latest
+          command: ["node", "dist/index.js"]
+          ports:
+            - containerPort: 3050
+          env:
+            - name: PORT
+              value: "3050"
+            - name: NODE_ENV
+              value: production
+            - name: DB_HOST
+              value: postgresql
+            - name: DB_PORT
+              value: "5432"
+            - name: REDIS_HOST
+              value: redis
+            - name: REDIS_PORT
+              value: "6379"
+          envFrom:
+            - secretRef:
+                name: cian-lead-generator-secrets
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3050
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3050
+            initialDelaySeconds: 30
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: cian-lead-generator
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 3050
+      targetPort: 3050

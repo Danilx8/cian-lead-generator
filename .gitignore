@@ -1,0 +1,13 @@
+node_modules
+logs/*
+.env
+dist
+.vscode
+docker/postgres
+docker/browsers
+.idea
+*/venv
+
+# Бэкапы, создаваемые thesis/docx_tools.py при правке ВКР.docx
+*.bak
+*.docx.*.bak

@@ -1,0 +1,84 @@
+name: cian-lead-generator
+networks:
+  main:
+    driver: bridge
+services:
+  redis:
+    build:
+      context: ./docker/redis
+      dockerfile: Dockerfile
+    image: klein-redis-rejson:latest
+    container_name: redis
+    environment:
+      - REDIS_USERNAME=${REDIS_USERNAME}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    ports:
+      - "6380:6379"
+    networks:
+      main:
+        aliases:
+          - redis
+  postgres:
+    image: postgres:17
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - ./docker/postgres:/var/lib/postgresql
+    networks:
+      main:
+        aliases:
+          - postgresql
+  k3s:
+    image: rancher/k3s
+    container_name: k3s
+    privileged: true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Доступ к localhost хоста
+    command: server --bind-address 0.0.0.0 --disable traefik --write-kubeconfig-mode 644 --kubelet-arg=max-pods=500 --kube-controller-manager-arg=node-cidr-mask-size=22 && kubectl config set-cluster k3s --insecure-skip-tls-verify=true
+    ports:
+      - "6443:6443"
+    volumes:
+      - ./storage/pictures:/storage/pictures
+      - ./docker/k8s:/etc/rancher/k3s
+      - ./docker/k8s/registries.yaml:/etc/rancher/k3s/registries.yaml:ro
+      - ./docker/k8s/pod_logs:/logs
+    networks:
+      main:
+        aliases:
+          - k3s
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3050:3050"
+    volumes:
+      - ./storage:/app/storage
+      - ./logs:/app/logs
+      - ./docker/k8s:/app/k8s  # Mount the generated kubeconfig
+      - ./blacklist:/app/src/api/blacklist
+    env_file:
+      - .env
+    environment:
+      - THERMOPTIC_PORT=${THERMOPTIC_PORT:-1234}
+      - THERMOPTIC_PROXY_USER=${THERMOPTIC_PROXY_USER:-thermoptic}
+      - THERMOPTIC_PROXY_PASSWORD=${THERMOPTIC_PROXY_PASSWORD:-thermoptic-changeme}
+      - DOCKER_HOST_IP=${DOCKER_HOST_IP:-host.docker.internal}
+    depends_on:
+      - postgres
+      - redis
+      - k3s
+    restart: unless-stopped
+    command: node dist/index.js
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Доступ к localhost хоста
+    networks:
+      main:
+        aliases:
+          - app

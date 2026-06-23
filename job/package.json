@@ -1,0 +1,33 @@
+{
+  "name": "job",
+  "version": "1.0.0",
+  "main": "./src/workerProcess.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+    "start": "node dist/workerProcess.js"
+  },
+  "keywords": [],
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@redis/client": "^5.6.0",
+    "async-mutex": "^0.5.0",
+    "axios": "^1.9.0",
+    "dotenv": "^16.5.0",
+    "events": "^3.3.0",
+    "npm": "^10.9.3",
+    "puppeteer-core": "^24.12.1",
+    "redis": "^5.6.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.5",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@types/redis": "^4.0.10",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.8.3"
+  }
+}
