@@ -1,0 +1,36 @@
+:root {
+  --color-bg: #F5FAFD;
+  --color-text: #0B2430;
+  --color-accent: #00AEEF;
+  --color-gray: #9FB6C1;
+  --color-gray-light: #7695A3;
+  --color-border: rgba(11, 36, 48, 0.12);
+
+  --safe-area-inset-top: 0px;
+  --safe-area-inset-bottom: 0px;
+  --safe-area-inset-bottom-limited: min(var(--safe-area-inset-bottom), 34px);
+
+  --app-height: 100vh;
+  --navbar-height: calc(56px + 16px + max(16px, var(--safe-area-inset-bottom-limited)));
+
+  /* Liquid Glass design tokens */
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-elevated: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(11, 36, 48, 0.10);
+  --glass-border-light: rgba(11, 36, 48, 0.16);
+  --glass-shadow: 0 8px 32px rgba(0, 60, 90, 0.10);
+  --glass-shadow-elevated: 0 12px 40px rgba(0, 60, 90, 0.14);
+  --glass-indicator: rgba(0, 174, 239, 0.14);
+  --glass-blur: 20px;
+  --glass-blur-strong: 24px;
+
+  --border-radius: 12px;
+  --border-radius-full: 9999px;
+
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+
+  --shadow-sm: 0 1px 2px 0 rgba(11, 36, 48, 0.08);
+  --shadow-md: 0 4px 6px -1px rgba(11, 36, 48, 0.10);
+}

@@ -1,0 +1,143 @@
+* {
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    background: transparent;
+    color: var(--color-text);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--duration-normal) ease;
+    outline: none;
+    text-decoration: none;
+}
+
+.btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+.btn-primary {
+    background: var(--color-accent);
+    color: var(--color-bg);
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: rgba(11, 36, 48, 0.06);
+    backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+    background: rgba(11, 36, 48, 0.10);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn var(--duration-normal) ease-out;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+.gradient-background {
+    background: linear-gradient(135deg, #FDFEFF 0%, #EAF6FC 100%);
+}
+
+.gradient-accent {
+    background: linear-gradient(135deg,
+            var(--color-accent) 0%,
+            #0077B6 100%);
+}
+
+.safe-top {
+    padding-top: var(--safe-area-inset-top);
+}
+
+.safe-bottom {
+    padding-bottom: var(--safe-area-inset-bottom);
+}
+
+.safe-both {
+    padding-top: var(--safe-area-inset-top);
+    padding-bottom: var(--safe-area-inset-bottom);
+}
+
+.scroll-smooth {
+    scroll-behavior: smooth;
+}
+
+/* Liquid Glass directional light border
+   Bright: top-left & bottom-right (light axis)
+   Dark:   top-right & bottom-left (shadow axis) */
+.glass-border-light {
+  position: relative;
+}
+.glass-border-light::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 0.5px;
+  background: conic-gradient(
+    from 225deg,
+    rgba(11, 36, 48, 0.03) 0deg,
+    rgba(11, 36, 48, 0.12) 90deg,
+    rgba(11, 36, 48, 0.03) 180deg,
+    rgba(11, 36, 48, 0.12) 270deg,
+    rgba(11, 36, 48, 0.03) 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 0.75rem;
+    }
+
+    .btn {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.95rem;
+    }
+}
